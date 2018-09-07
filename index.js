@@ -77,7 +77,7 @@ function decode(text) {
   for (let decoder of decoders) {
     try {
       return decoder(text)
-    } catch {
+    } catch (e) {
     }
   }
 }
