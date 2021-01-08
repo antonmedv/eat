@@ -6,7 +6,7 @@ Command-line tool for converting **anything** to JSON.
 ## Features
 
 * Eat everything, spits out json
-* Supports **json**, **yaml**, **toml**, **xml**, **ini**
+* Supports **json**, **yaml**, **toml**, **xml**, **ini**, **cli tables**
 * Formatting and highlighting
 * Standalone binary
 
@@ -26,6 +26,8 @@ $ eat resp.xml > resp.json
 $ cat config.yaml | eat > config.json
 
 $ eat deps.toml
+
+$ ps | eat | fx .PID
 ```
 
 ### Other examples
