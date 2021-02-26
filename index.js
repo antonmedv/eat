@@ -2,6 +2,7 @@
 'use strict'
 const fs = require('fs')
 const meow = require('meow')
+const stripAnsi = require('strip-ansi')
 const pretty = require('@medv/prettyjson')
 const stdin = require('get-stdin')
 
@@ -74,6 +75,7 @@ function decodeINI(text) {
 }
 
 function decode(text) {
+  text = stripAnsi(text)
   for (let decoder of decoders) {
     try {
       return decoder(text)
