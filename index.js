@@ -11,9 +11,9 @@ const cli = meow(`
 
   Examples
     $ eat resp.xml > resp.json
-    
+
     $ cat config.yaml | eat > config.json
-    
+
     $ eat deps.toml
 
 `)
@@ -47,6 +47,7 @@ const decoders = [
   decodeYAML,
   decodeTOML,
   decodeINI,
+  decodeCLITable,
 ]
 
 function decodeJSON(text) {
@@ -70,7 +71,14 @@ function decodeTOML(text) {
 }
 
 function decodeINI(text) {
-  return require('ini').parse(text)
+  if (!/^\[.*\]$/.test(text)) throw 'not ini'
+
+  return  require('ini').parse(text)
+}
+
+function decodeCLITable(text) {
+  const [header, ...data] = text.replace(/\n$/,'m').split('\n').map(x => x.split(/\s+/))
+  return data.map(line => line.reduce((a, v, i) => { if (v || header[i]) a[header[i]] = v; return a }, {}))
 }
 
 function decode(text) {
