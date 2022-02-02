@@ -77,7 +77,7 @@ function decodeINI(text) {
 }
 
 function decodeCLITable(text) {
-  const [header, ...data] = text.replace(/\n$/,'m').split('\n').map(x => x.split(/\s+/))
+  const [header, ...data] = text.replace(/\n$/, '').split('\n').map(x => x.replace(/^\s+|\s+$/, '').split(/\s+/))
   return data.map(line => line.reduce((a, v, i) => { if (v || header[i]) a[header[i]] = v; return a }, {}))
 }
 
