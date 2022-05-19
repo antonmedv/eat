@@ -1,5 +1,5 @@
 import test from 'ava'
-import eat from './index.js'
+import eat, {decoders} from './index.js'
 
 test('null', t => {
   t.is(eat(`null`), null)
@@ -65,12 +65,21 @@ user = foo`), {
     },
     scope: 'global',
   })
+  t.false(decoders.ini.accept('hello'))
 })
 
 test('csv', t => {
   t.deepEqual(eat(`a,"b b",c\n1,2,3`), [['a', 'b b', 'c'], ['1', '2', '3']])
 })
 
+test('tsv', t => {
+  t.deepEqual(eat(`a\t"b b"\tc\n1\t2\t3`), [['a', 'b b', 'c'], ['1', '2', '3']])
+})
+
+test('list', t => {
+  t.deepEqual(eat(`a\nb\n`), ['a', 'b'])
+})
+
 test('text', t => {
-  t.deepEqual(eat(`hello`), 'hello')
+  t.deepEqual(eat(`hello\n world`), 'hello\n world')
 })

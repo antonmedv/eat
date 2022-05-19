@@ -8,53 +8,77 @@ import {render as renderHTML} from 'dom-serializer'
 import INI from 'ini'
 import CSV from './csv.js'
 
-const decoders = {
-  json: x => JSON.parse(x),
-  json5: x => JSON5.parse(x),
-  toml: x => TOML.parse(x),
-  yaml: x => {
-    let y = YAML.parse(x)
-    if (typeof y === 'string') {
-      throw 'ಠ_ಠ'
-    }
-    return y
+export const decoders = {
+  json: {
+    accept: everything,
+    parse: x => JSON.parse(x)
   },
-  xml: (x, options) => XML.xml2js(x, {compact: true, ...options}),
-  html: (x, options) => {
-    let dom = parseDocument(x)
-    let xml = renderHTML(dom, {xmlMode: true})
-    return XML.xml2js(xml, {compact: true, ...options})
+  json5: {
+    accept: everything,
+    parse: x => JSON5.parse(x),
   },
-  ini: x => {
-    if (!/^\[.+?]/m.test(x)) {
-      throw 'ಠ_ಠ'
-    }
-    return INI.parse(x)
+  toml: {
+    accept: everything,
+    parse: x => TOML.parse(x),
   },
-  csv: (x, options) => {
-    options = {delimiter: ',', ...options}
-    if (!x.includes(options.delimiter)) {
-      throw 'ಠ_ಠ'
-    }
-    let lines = x.split(/\n|\r\n/)
-    let cols = lines[0].split(options.delimiter).length
-    for (let line of lines) {
-      if (line.split(options.delimiter).length !== cols) {
-        throw 'ಠ_ಠ'
-      }
-    }
-    return CSV.parse(x, options)
+  yaml: {
+    accept: everything,
+    parse: x => {
+      let y = YAML.parse(x)
+      if (typeof y === 'string') throw 'ಠ_ಠ'
+      return y
+    },
   },
-  text: x => x,
+  xml: {
+    accept: everything,
+    parse: x => XML.xml2js(x, {compact: true}),
+  },
+  html: {
+    accept: everything,
+    parse: x => {
+      let dom = parseDocument(x)
+      let xml = renderHTML(dom, {xmlMode: true})
+      return XML.xml2js(xml, {compact: true})
+    },
+  },
+  ini: {
+    accept: x => /^.+=.+$/m.test(x),
+    parse: x => {
+      let y = INI.parse(x)
+      if (typeof y !== 'object') throw 'ಠ_ಠ'
+      if (Object.keys(y).some(key => key.includes(' '))) throw 'ಠ_ಠ'
+      return y
+    },
+  },
+  csv: {
+    accept: x => x.split('\n').every(line => line.includes(',')),
+    parse: x => CSV.parse(x, ','),
+  },
+  tsv: {
+    accept: x => x.split('\n').every(line => line.includes('\t')),
+    parse: x => CSV.parse(x, '\t'),
+  },
+  list: {
+    accept: x => x.trim().split('\n').every(line => /^[^\s].*$/m.test(line)),
+    parse: x => x.trim().split('\n'),
+  },
+  text: {
+    accept: everything,
+    parse: x => x,
+  },
 }
 
-export default function eat(apple, options = {}) {
-  for (let [kind, parse] of Object.entries(decoders)) {
+export default function eat(apple) {
+  for (let {accept, parse} of Object.values(decoders)) {
     try {
-      return parse(apple, options)
+      if (accept(apple)) return parse(apple)
     } catch (e) {
       // ᕕ(ᐛ)ᕗ
     }
   }
   throw 'unknown format'
+}
+
+function everything() {
+  return true
 }

@@ -1,10 +1,6 @@
 import chalk from 'chalk'
 
 export default function print(v, level = 1, visited = new Set()) {
-  if (visited.has(v)) {
-    return '{}'
-  }
-  visited.add(v)
   if (v === null) {
     return chalk.grey.bold('null')
   }
@@ -21,6 +17,8 @@ export default function print(v, level = 1, visited = new Set()) {
     return chalk.green.bold(JSON.stringify(v))
   }
   if (Array.isArray(v)) {
+    if (visited.has(v)) return '[]'
+    visited.add(v)
     let output = '[\n'
     const len = v.length
     let i = 0
@@ -35,6 +33,8 @@ export default function print(v, level = 1, visited = new Set()) {
     return output + '  '.repeat(level - 1) + ']'
   }
   if (isObject(v)) {
+    if (visited.has(v)) return '{}'
+    visited.add(v)
     let output = '{\n'
     const entries = Object.entries(v).filter(notUndefined) // JSON.stringify compatibility
     const len = entries.length

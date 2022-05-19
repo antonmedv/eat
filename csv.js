@@ -1,5 +1,5 @@
 export default {
-  parse(str, options) {
+  parse(str, delimiter) {
     let arr = []
     let quote = false
     for (let row = 0, col = 0, c = 0; c < str.length; c++) {
@@ -15,7 +15,7 @@ export default {
         quote = !quote
         continue
       }
-      if (cc === options.delimiter && !quote) {
+      if (cc === delimiter && !quote) {
         ++col
         continue
       }
