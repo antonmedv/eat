@@ -32,7 +32,7 @@ cat config.yaml | eat
 eat *.json
 ```
 
-Use **eat** with [fx](https://github.com/antonmedv/fx) tool for extracting fields.
+Use **eat** with [fx](https://github.com/antonmedv/fx):
 
 ```
 cat response.xml | eat | fx .Document.Title
