@@ -17,6 +17,11 @@ void async function main() {
     apples.unshift(text)
   }
 
+  if (apples.length === 0) {
+    console.log(`usage: eat [file...]`)
+    return
+  }
+
   let oranges = apples.map(eat)
   if (oranges.length === 1) {
     oranges = oranges[0]
