@@ -1,48 +1,47 @@
+# Eat 🧀
 
-# [![Build Status](https://travis-ci.org/antonmedv/eat.svg?branch=master)](https://travis-ci.org/antonmedv/eat)
+CLI for converting **anything** to JSON. 
 
-Command-line tool for converting **anything** to JSON.
+**Eat** tries to apply 
+parsers in the next order:
 
-## Features
-
-* Eat everything, spits out json
-* Supports **json**, **yaml**, **toml**, **xml**, **ini**, **cli tables**
-* Formatting and highlighting
-* Standalone binary
+```
+json
+ ↪json5
+   ↪toml
+     ↪yaml
+       ↪xml
+         ↪html
+           ↪ini
+             ↪csv
+               ↪tsv
+```
 
 ## Install
 
 ```
-$ npm install -g @medv/eat
+npm i -g @medv/eat
 ```
-
-Or download standalone binary from [releases](https://github.com/antonmedv/eat/releases) page.
 
 ## Usage
 
 ```
-$ eat resp.xml > resp.json
+eat [file...]
 
-$ cat config.yaml | eat > config.json
-
-$ eat deps.toml
-
-$ ps | eat | fx .PID
+cat config.yaml | eat
+eat *.json
 ```
 
-### Other examples
-
-Use it with [fx](https://github.com/antonmedv/fx) tool for extracting needed fields.
+Use **eat** with [fx](https://github.com/antonmedv/fx) tool for extracting fields.
 
 ```
-$ cat response.xml | eat | fx .Document.Title
+cat response.xml | eat | fx .Document.Title
 ```
 
 ## Related
 
-* [fx](https://github.com/antonmedv/fx) – cli JSON processor on JS
-* [any-json](https://github.com/any-json/any-json) - alternative cli tool for converting formats
+* [fx](https://github.com/antonmedv/fx) – terminal JSON viewer.
 
 ## License
 
-MIT
+[MIT](LICENSE)
