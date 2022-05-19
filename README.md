@@ -30,6 +30,7 @@ eat [file...]
 
 cat config.yaml | eat
 eat *.json
+ls | eat
 ```
 
 Use **eat** with [fx](https://github.com/antonmedv/fx):
